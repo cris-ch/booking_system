@@ -23,6 +23,7 @@ app.use(
 mongoose.connect(process.env.MONGO_URL);
 
 app.get("/test", (req, res) => {
+  // This line sets up a route for handling HTTP GET requests to the /test endpoint. When a request is made to this endpoint, the server will respond with the text "Hello World!".
   res.send("Hello World!");
 });
 
