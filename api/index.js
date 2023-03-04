@@ -1,18 +1,26 @@
-// This is a Node.js script that uses the Express.js framework to create a web server.
+// This code sets up an Express server that listens on port 4000. It includes middleware for JSON parsing and CORS handling. It connects to a MongoDB database using the mongoose package. It also imports a User model from the ./models/User file and a bcrypt package for password hashing.
 
-const express = require("express"); 
-const cors = require("cors"); 
-const mongoose = require("mongoose"); 
-const User = require("./models/User"); 
-const bcrypt = require("bcrypt"); 
+// The bcryptSalt variable is set using the genSaltSync method of the bcrypt package.
 
-const app = express(); 
+// There are two endpoints defined:
 
-const bcryptSalt = bcrypt.genSaltSync(10); 
+// A GET endpoint at /test that simply returns the string "Hello World!" when accessed.
+// A POST endpoint at /register that expects a JSON payload containing name, email, and password fields. The code then attempts to create a new user in the database using the User.create() method with the given information. The password field is hashed using the bcrypt.hashSync() method with the bcryptSalt variable. If the user is created successfully, their information is returned as JSON. If there is an error creating the user, a 422 status code and the error message is returned as JSON.
+// Overall, this code sets up a basic server with a user registration endpoint that stores passwords securely using bcrypt.
 
-require("dotenv").config(); 
+const express = require("express");
+const cors = require("cors");
+const mongoose = require("mongoose");
+const User = require("./models/User");
+const bcrypt = require("bcrypt");
 
-app.use(express.json()); 
+const app = express();
+
+const bcryptSalt = bcrypt.genSaltSync(10);
+
+require("dotenv").config();
+
+app.use(express.json());
 app.use(
   cors({
     origin: "http://localhost:5173",
@@ -20,24 +28,41 @@ app.use(
   })
 );
 
-mongoose.connect(process.env.MONGO_URL); 
+mongoose.connect(process.env.MONGO_URL);
 
 app.get("/test", (req, res) => {
   res.send("Hello World!");
 });
 
-app.post("/register", async (req, res) => {   
+app.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
-  const userDoc = await User.create({
-    name,
-    email,
-    password: bcrypt.hashSync(password, bcryptSalt),
-  });
 
-  res.json(userDoc);
+  try {
+    const userDoc = await User.create({
+      name,
+      email,
+      password: bcrypt.hashSync(password, bcryptSalt),
+    });
+
+    res.json(userDoc);
+  } catch (error) {
+    res.status(422).json(error);
+  }
 });
 
-app.listen(4000); 
+app.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  const userDoc = await User.findOne({ email });
+
+  if (userDoc) {
+    res.json("found");
+  } else {
+    res.json("not found");
+  }
+});
+
+app.listen(4000);
 
 // const express = require("express"); This line imports the Express.js framework and assigns it to the express constant. This allows us to create an instance of the Express application.
 // const cors = require("cors"); This line imports the cors middleware package, which is used to enable Cross-Origin Resource Sharing (CORS). This is necessary when making requests from a web application to a different domain.
@@ -80,4 +105,3 @@ app.listen(4000);
 // });
 
 // app.listen(4000); This line tells the Express application to start listening for incoming requests on port 4000. When the server is running, it will be able to handle requests and send responses according to the routes that have been defined.
-
