@@ -1,12 +1,12 @@
-import React from 'react'
+import React from "react";
 import { Link } from "react-router-dom";
-import aPlusLogo from "./assets/logo.svg"
+import aPlusLogo from "./assets/logo.svg";
 
 const Header = () => {
   return (
     <div>
-            <header className="flex items-center justify-between">
-        <a href="" className="flex items-center gap-1">
+      <header className="flex items-center justify-between mt-3">
+        <a href="/" className="flex items-center gap-1">
           <img src={aPlusLogo} className="h-10" alt="A Plus Logo" />
           <span className="font-bold text-xl">APlus Booking</span>
         </a>
@@ -33,7 +33,10 @@ const Header = () => {
             </svg>
           </button>
         </div>
-        <Link to={'/login'} className="flex gap-2 border border-color-gray-300 rounded-full py-2 px-4 items-center">
+        <Link
+          to={"/login"}
+          className="flex gap-2 border border-color-gray-300 rounded-full py-2 px-4 items-center"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -65,7 +68,7 @@ const Header = () => {
         </Link>
       </header>
     </div>
-  )
-}
+  );
+};
 
-export default Header
+export default Header;
