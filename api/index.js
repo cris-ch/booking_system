@@ -13,22 +13,16 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const User = require("./models/User");
 const bcrypt = require("bcrypt");
-
+const express = require("express");
 const app = express();
+const cors = require("cors");
 
-const bcryptSalt = bcrypt.genSaltSync(10);
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true
+}
 
-require("dotenv").config();
-
-app.use(express.json());
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-    credentials: true,
-  })
-);
-
-mongoose.connect(process.env.MONGO_URL);
+));
 
 app.get("/test", (req, res) => {
   res.send("Hello World!");

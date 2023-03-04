@@ -20,7 +20,6 @@ const RegisterPage = () => {
     } catch (error) {
       alert("Error registering user. Please check your information and try again.")
     }
-
   };
 
   return (
