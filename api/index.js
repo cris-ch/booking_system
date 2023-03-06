@@ -8,7 +8,7 @@ const jwt = require("jsonwebtoken");
 const app = express();
 
 const bcryptSalt = bcrypt.genSaltSync(10);
-const jwtSecret = "secret";
+const jwtSecret = "erboejrnberojfn";
 
 require("dotenv").config();
 
@@ -50,17 +50,12 @@ app.post("/login", async (req, res) => {
   if (userDoc) {
     const isPasswordValid = bcrypt.compareSync(password, userDoc.password);
     if (isPasswordValid) {
-      jwt.sign(
-        { email: userDoc.email, id: userDoc._id },
-        jwtSecret,
-        {},
-        (err, token) => {
-          if (err) {
-            res.status(422).json(err);
-          }
-          res.cookie("token", token).json("logged in");
+      jwt.sign({ email: userDoc.email, id: userDoc._id }, jwtSecret, (err, token) => {
+        if (err) {
+          res.status(422).json(err);
         }
-      );
+        res.cookie("token", token).json(userDoc);
+      });
     } else {
       res.status(422).json("wrong password");
     }
