@@ -1,7 +1,6 @@
-import {React, useState} from "react";
+import { React, useState } from "react";
 import { Link } from "react-router-dom";
-import axios from 'axios';
-
+import axios from "axios";
 
 const RegisterPage = () => {
   const [name, setName] = useState("");
@@ -11,16 +10,18 @@ const RegisterPage = () => {
   async function registerUser(e) {
     e.preventDefault();
     try {
-      await axios.post('/register', {
+      await axios.post("/register", {
         name,
         email,
-        password
-      })
-      alert('User registered successfully')
+        password,
+      });
+      alert("User registered successfully");
     } catch (error) {
-      alert("Error registering user. Please check your information and try again.")
+      alert(
+        "Error registering user. Please check your information and try again."
+      );
     }
-  };
+  }
 
   return (
     <div className="mt-4 grow flex items-center justify-around">

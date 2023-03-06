@@ -1,12 +1,11 @@
-import e from "cors";
-import {useState, React} from "react";
-import { Link } from "react-router-dom";
+import { useState, React } from "react";
+import { Link, Navigate } from "react-router-dom";
 import axios from "axios";
-
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [redirect, setRedirect] = useState(false);
 
   async function handleLoginSubmit(e) {
     e.preventDefault();
@@ -16,11 +15,16 @@ const LoginPage = () => {
         password,
       });
       alert("User logged in successfully");
+      setRedirect(true);
     } catch (error) {
       alert(
         "Error logging in user. Please check your information and try again."
       );
     }
+  }
+
+  if (redirect) {
+    return <Navigate to="/" />;
   }
 
   return (
@@ -40,9 +44,7 @@ const LoginPage = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <button className="primary">
-            Login
-          </button>
+          <button className="primary">Login</button>
           <div className="text-center py-2 text-gray-500">
             Don't have an account yet?{" "}
             <Link className="underline text-black" to={"/register"}>
