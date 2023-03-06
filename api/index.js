@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const User = require("./models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const CookieParser = require("cookie-parser");
 
 const app = express();
 
@@ -13,6 +14,7 @@ const jwtSecret = "erboejrnberojfn";
 require("dotenv").config();
 
 app.use(express.json());
+app.use(CookieParser());
 app.use(
   cors({
     origin: "http://localhost:5173",
@@ -61,6 +63,19 @@ app.post("/login", async (req, res) => {
     }
   } else {
     res.json("not found");
+  }
+});
+
+app.get("/profile", async (req, res) => {
+  const { token } = req.cookies;
+  if (token) {
+    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+      if (err) throw err;
+      const {name, email, _id} = await User.findById(userData.id)
+      res.json({name, email, _id});
+    });
+  } else {
+    res.status(401).json("unauthorized");
   }
 });
 
