@@ -75,8 +75,12 @@ app.get("/profile", async (req, res) => {
       res.json({name, email, _id});
     });
   } else {
-    res.status(401).json("unauthorized");
+    res.json(null)
   }
+});
+
+app.post("/logout", (req, res) => {
+  res.cookie("token", '').json(true)
 });
 
 app.listen(4000);
