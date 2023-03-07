@@ -8,10 +8,10 @@ const Header = () => {
 
   return (
     <header className="flex items-center justify-between mt-3">
-      <a href="/" className="flex items-center gap-1">
+      <Link to={'/'} className="flex items-center gap-1">
         <img src={aPlusLogo} className="h-10" alt="A Plus Logo" />
         <span className="font-bold text-xl">APlus Booking</span>
-      </a>
+      </Link>
       <div className="flex gap-2 border border-color-gray-300 rounded-full py-2 px-4 shadow-md shadow-color-gray-300 items-center">
         <div>Anywhere</div>
         <div className="border-l border-gray-300"></div>
@@ -36,7 +36,7 @@ const Header = () => {
         </button>
       </div>
       <Link
-        to={"/login"}
+        to={user ? "/account" : "/login"}
         className="flex gap-2 border border-color-gray-300 rounded-full py-2 px-4 items-center"
       >
         <svg
