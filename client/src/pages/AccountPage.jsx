@@ -2,6 +2,11 @@ import React, { useContext, useState } from "react";
 import { UserContext } from "../UserContext";
 import { Link, Navigate, useParams } from "react-router-dom";
 import axios from "axios";
+import PropertiesPage from "./PropertiesPage";
+
+import { CgProfile } from "react-icons/cg";
+import { FaListOl } from "react-icons/fa";
+import {MdOutlineHomeWork} from "react-icons/md";
 
 const AccountPage = () => {
   const { user, setUser, ready } = useContext(UserContext);
@@ -14,9 +19,8 @@ const AccountPage = () => {
 
   async function logout() {
     await axios.post("/logout");
-    setRedirect("/")
+    setRedirect("/");
     setUser(null);
-
   }
 
   if (!ready) return <div>Loading...</div>;
@@ -26,9 +30,11 @@ const AccountPage = () => {
   }
 
   function linkClasses(path = null) {
-    let classes = "py-2 px-6";
+    let classes = "inline-flex gap-1 py-2 px-6 rounded-full";
     if (subpage === path) {
-      classes += " bg-primary text-white rounded-full";
+      classes += " bg-primary text-white";
+    } else {
+      classes += " bg-red-100";
     }
     return classes;
   }
@@ -41,13 +47,16 @@ const AccountPage = () => {
     <div>
       <nav className="w-full flex justify-center mt-8 gap-5 mb-8">
         <Link className={linkClasses("profile")} to={"/account/"}>
+          <CgProfile className="w-6 h-6" />
           Profile
         </Link>
         <Link className={linkClasses("bookings")} to={"/account/bookings"}>
+          <FaListOl className="w-6 h-6" />
           Bookings
         </Link>
         <Link className={linkClasses("properties")} to={"/account/properties"}>
-          Properties
+          <MdOutlineHomeWork className="w-6 h-6" />
+          My Properties
         </Link>
       </nav>
       {subpage === "profile" && (
@@ -58,6 +67,7 @@ const AccountPage = () => {
           </button>
         </div>
       )}
+      {subpage === "properties" && <PropertiesPage />}
     </div>
   );
 };
