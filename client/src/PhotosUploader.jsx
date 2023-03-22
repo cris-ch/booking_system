@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { MdFileUpload } from "react-icons/md";
 
-const PhotosUploader = () => {
-  const [addedPhotos, setAddedPhotos] = useState([]);
+const PhotosUploader = ({addedPhotos, onChange}) => {
   const [photoLink, setPhotoLink] = useState("");
 
   async function AddPhotoByLink(e) {
@@ -11,7 +10,7 @@ const PhotosUploader = () => {
     const { data: filename } = await axios.post("/upload-by-url", {
       url: photoLink,
     });
-    setAddedPhotos([...addedPhotos, filename]);
+    onChange([...addedPhotos, filename]);
     setPhotoLink("");
   }
 
@@ -29,7 +28,7 @@ const PhotosUploader = () => {
       })
       .then((res) => {
         const { data: filenames } = res;
-        setAddedPhotos([...addedPhotos, ...filenames]);
+        onChange([...addedPhotos, ...filenames]);
       })
       .catch((error) => {
         console.log(error);

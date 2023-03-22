@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import Features from "./PropertiesFeatures";
 import PhotosUploader from "./PhotosUploader";
+import axios from "axios";
+import { Navigate } from "react-router-dom";
 
 const NewPropertyForm = () => {
   const [title, setTitle] = useState("");
@@ -11,6 +13,8 @@ const NewPropertyForm = () => {
   const [checkInTime, setCheckInTime] = useState("");
   const [checkOutTime, setCheckOutTime] = useState("");
   const [maxGuests, setMaxGuests] = useState(1);
+  const [addedPhotos, setAddedPhotos] = useState([]);
+  const [redirect, setRedirect] = useState("");
 
   function inputHeader(text) {
     return <h2 className="text-xl mt-4">{text}</h2>;
@@ -27,9 +31,29 @@ const NewPropertyForm = () => {
     );
   }
 
+  async function addNewPlace(e) {
+    e.preventDefault();
+    await axios.post('/properties', {
+      title,
+      address,
+      description,
+      features,
+      extraInfo,
+      checkInTime,
+      checkOutTime,
+      maxGuests,
+      addedPhotos
+    })
+    setRedirect('/account/properties')
+  }
+
+  if (redirect) {
+    return <Navigate to={redirect} />
+  }
+
   return (
     <div>
-      <form>
+      <form onSubmit={addNewPlace}>
         <h1 className="text-xl">Property Details</h1>
         {preInput(
           "Title",
@@ -52,7 +76,7 @@ const NewPropertyForm = () => {
           "Photos",
           "Add photos of your property. You can add up to 10 photos."
         )}
-        <PhotosUploader />
+        <PhotosUploader addedPhotos={addedPhotos} onChange={setAddedPhotos}/>
         {preInput("Description", "Enter a description of your property.")}
         <textarea
           className="border-gray-500"

@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const User = require("./models/User");
+const Property = require("./models/Property");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const CookieParser = require("cookie-parser");
@@ -115,6 +116,42 @@ app.post("/upload", photosMiddleware.array("photos", 10), (req, res) => {
     uploadedFiles.push(newPath.replace("uploads/", ""));
   }
   res.json(uploadedFiles);
+});
+
+app.post("/properties", async (req, res) => {
+  const { token } = req.cookies;
+  const {
+    title,
+    address,
+    description,
+    addedPhotos,
+    features,
+    extraInfo,
+    checkIn,
+    checkOut,
+    maxGuests,
+  } = req.body;
+  if (token) {
+    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+      if (err) throw err;
+      const propertyDoc = await Property.create({
+        owner: userData.id,
+        title,
+        address,
+        description,
+        addedPhotos,
+        features,
+        extraInfo,
+        checkIn,
+        checkOut,
+        maxGuests,
+      });
+      res.json(propertyDoc);
+    });
+
+  } else {
+    res.json(null);
+  }
 });
 
 app.listen(4000);
