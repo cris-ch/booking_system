@@ -5,6 +5,9 @@ const User = require("./models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const CookieParser = require("cookie-parser");
+const imageDownloader = require("image-downloader");
+const multer = require("multer");
+const fs = require("fs");
 
 const app = express();
 
@@ -15,6 +18,7 @@ require("dotenv").config();
 
 app.use(express.json());
 app.use(CookieParser());
+app.use("/uploads", express.static(__dirname + "/uploads"));
 app.use(
   cors({
     origin: "http://localhost:5173",
@@ -52,12 +56,16 @@ app.post("/login", async (req, res) => {
   if (userDoc) {
     const isPasswordValid = bcrypt.compareSync(password, userDoc.password);
     if (isPasswordValid) {
-      jwt.sign({ email: userDoc.email, id: userDoc._id }, jwtSecret, (err, token) => {
-        if (err) {
-          res.status(422).json(err);
+      jwt.sign(
+        { email: userDoc.email, id: userDoc._id },
+        jwtSecret,
+        (err, token) => {
+          if (err) {
+            res.status(422).json(err);
+          }
+          res.cookie("token", token).json(userDoc);
         }
-        res.cookie("token", token).json(userDoc);
-      });
+      );
     } else {
       res.status(422).json("wrong password");
     }
@@ -71,16 +79,42 @@ app.get("/profile", async (req, res) => {
   if (token) {
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
       if (err) throw err;
-      const {name, email, _id} = await User.findById(userData.id)
-      res.json({name, email, _id});
+      const { name, email, _id } = await User.findById(userData.id);
+      res.json({ name, email, _id });
     });
   } else {
-    res.json(null)
+    res.json(null);
   }
 });
 
 app.post("/logout", (req, res) => {
-  res.cookie("token", '').json(true)
+  res.cookie("token", "").json(true);
+});
+
+app.post("/upload-by-url", async (req, res) => {
+  const { url } = req.body;
+  console.log("url", url);
+  const newName = "photo" + Date.now() + ".jpg";
+
+  await imageDownloader.image({
+    url,
+    dest: __dirname + "/uploads/" + newName,
+  });
+  res.json(newName);
+});
+
+const photosMiddleware = multer({ dest: "uploads" });
+app.post("/upload", photosMiddleware.array("photos", 10), (req, res) => {
+  const uploadedFiles = [];
+  for (let i = 0; i < req.files.length; i++) {
+    const {path, originalname} = req.files[i];
+    const nameParts = originalname.split(".");
+    const extension = nameParts[nameParts.length - 1];
+    const newPath = path + "." + extension;
+    fs.renameSync(path, newPath);
+    uploadedFiles.push(newPath.replace("uploads/", ""));
+  }
+  res.json(uploadedFiles);
 });
 
 app.listen(4000);
