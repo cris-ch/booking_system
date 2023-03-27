@@ -3,6 +3,7 @@ import PhotosUploader from "../PhotosUploader";
 import Features from "../PropertiesFeatures";
 import axios from "axios";
 import AccountNav from "../AccountNav";
+import { Navigate } from "react-router-dom";
 
 const PropertiesFormPage = () => {
   const [title, setTitle] = useState("");
@@ -14,6 +15,7 @@ const PropertiesFormPage = () => {
   const [checkOutTime, setCheckOutTime] = useState("");
   const [maxGuests, setMaxGuests] = useState(1);
   const [addedPhotos, setAddedPhotos] = useState([]);
+  const [redirect, setRedirect] = useState(false);
 
   function inputHeader(text) {
     return <h2 className="text-xl mt-4">{text}</h2>;
@@ -43,6 +45,11 @@ const PropertiesFormPage = () => {
       maxGuests,
       addedPhotos,
     });
+    setRedirect(true);
+  }
+
+  if (redirect) {
+    return <Navigate to="/account/properties" />;
   }
 
   return (
