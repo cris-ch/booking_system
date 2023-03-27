@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PhotosUploader from "../PhotosUploader";
 import Features from "../PropertiesFeatures";
 import axios from "axios";
 import AccountNav from "../AccountNav";
-import { Navigate } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 
 const PropertiesFormPage = () => {
+  const { id } = useParams();
   const [title, setTitle] = useState("");
   const [address, setAddress] = useState("");
   const [description, setDescription] = useState("");
@@ -16,6 +17,22 @@ const PropertiesFormPage = () => {
   const [maxGuests, setMaxGuests] = useState(1);
   const [addedPhotos, setAddedPhotos] = useState([]);
   const [redirect, setRedirect] = useState(false);
+
+  useEffect(() => {
+    if (id) {
+      axios.get("/properties/" + id).then(({ data }) => {
+        setTitle(data.title);
+        setAddress(data.address);
+        setDescription(data.description);
+        setFeatures(data.features);
+        setExtraInfo(data.extraInfo);
+        setCheckInTime(data.checkInTime);
+        setCheckOutTime(data.checkOutTime);
+        setMaxGuests(data.maxGuests);
+        setAddedPhotos(data.photos);
+      });
+    }
+  }, [id]);
 
   function inputHeader(text) {
     return <h2 className="text-xl mt-4">{text}</h2>;
@@ -83,7 +100,7 @@ const PropertiesFormPage = () => {
           {preInput("Description", "Enter a description of your property.")}
           <textarea
             className="border-gray-500"
-            type={description}
+            value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Description"
           />
@@ -95,7 +112,7 @@ const PropertiesFormPage = () => {
           )}
           <textarea
             className="border-gray-500"
-            type={extraInfo}
+            value={extraInfo}
             onChange={(e) => setExtraInfo(e.target.value)}
             placeholder="Extra Info"
           />

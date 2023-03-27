@@ -124,7 +124,7 @@ app.post("/properties", async (req, res) => {
     title,
     address,
     description,
-    addedPhotos,
+    photos: addedPhotos,
     features,
     extraInfo,
     checkIn,
@@ -161,6 +161,17 @@ app.get("/properties", async (req, res) => {
       if (err) throw err;
       const properties = await Property.find({ owner: userData.id });
       res.json(properties);
+    });
+  }
+});
+
+app.get("/properties/:id", async (req, res) => {
+  const { token } = req.cookies;
+  if (token) {
+    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+      if (err) throw err;
+      const property = await Property.findById(req.params.id);
+      res.json(property);
     });
   }
 });

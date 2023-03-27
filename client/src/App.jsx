@@ -27,6 +27,7 @@ function App() {
             path="/account/properties/new"
             element={<PropertiesFormPage />}
           />
+          <Route path="/account/properties/:id" element={<PropertiesFormPage />} />
         </Route>
       </Routes>
     </UserContextProvider>

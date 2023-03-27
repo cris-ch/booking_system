@@ -25,11 +25,19 @@ const PropertiesPage = () => {
           <MdOutlineExposurePlus1 className="h-6 w-6" />
         </Link>
       </div>
-      <div>
+      <div className="mt-4">
         {properties.length > 0 && properties.map(property => (
-          <div>
-            {property.title}
-          </div>
+          <Link to={'/account/properties/'+property._id} className="cursor-pointer flex gap-4 bg-gray-300 p-4 rounded-2xl">
+            <div className="w-32 h-32 bg-gray-400 grow shrink-0">
+              {property.photos.length > 0 && property.photos.map(photo => (
+                <img src={photo} alt="property photo" />  
+              ))}
+            </div>
+            <div className="grow-0 shrink">
+            <h2 className="text-xl">{property.title}</h2>
+            <p>{property.description}</p>
+            </div>
+          </Link>
         ))}
       </div>
     </div>
