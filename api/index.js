@@ -154,4 +154,15 @@ app.post("/properties", async (req, res) => {
   }
 });
 
+app.get("/properties", async (req, res) => {
+  const { token } = req.cookies;
+  if (token) {
+    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+      if (err) throw err;
+      const properties = await Property.find({ owner: userData.id });
+      res.json(properties);
+    });
+  }
+});
+
 app.listen(4000);

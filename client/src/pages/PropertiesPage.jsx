@@ -1,10 +1,18 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { Link, useParams } from "react-router-dom";
 import NewPropertyForm from "../NewPropertyForm";
 import { MdOutlineExposurePlus1 } from "react-icons/md";
 import AccountNav from "../AccountNav";
+import axios from 'axios';
 
 const PropertiesPage = () => {
+  const [properties, setProperties] = useState([]);
+  useEffect(() => {
+    axios.get('/properties').then(({ data }) => {
+      console.log(data)
+      setProperties(data);
+    })
+  }, []);
   return (
     <div>
       <AccountNav />
@@ -16,6 +24,13 @@ const PropertiesPage = () => {
           Add new property
           <MdOutlineExposurePlus1 className="h-6 w-6" />
         </Link>
+      </div>
+      <div>
+        {properties.length > 0 && properties.map(property => (
+          <div>
+            {property.title}
+          </div>
+        ))}
       </div>
     </div>
   );
