@@ -176,4 +176,42 @@ app.get("/properties/:id", async (req, res) => {
   }
 });
 
+app.put("/properties", async (req, res) => {
+  const { token } = req.cookies;
+  const {
+    id,
+    title,
+    address,
+    description,
+    photos: addedPhotos,
+    features,
+    extraInfo,
+    checkIn,
+    checkOut,
+    maxGuests,
+  } = req.body;
+  console.log("request body", req.body)
+  console.log("checkIn", checkIn, "checkOut", checkOut)
+  jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+    if (err) throw err;
+    const propertyDoc = await Property.findById(id);
+    console.log("propertyDoc", propertyDoc, "user id", userData.id);
+    if (propertyDoc.owner.toString() === userData.id) {
+      propertyDoc.set({
+        title,
+        address,
+        description,
+        photos: addedPhotos,
+        features,
+        extraInfo,
+        checkIn,
+        checkOut,
+        maxGuests,
+      });
+      await propertyDoc.save()
+      res.json('ok');
+    }
+  });
+});
+
 app.listen(4000);

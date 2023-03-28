@@ -12,8 +12,8 @@ const PropertiesFormPage = () => {
   const [description, setDescription] = useState("");
   const [features, setFeatures] = useState([]);
   const [extraInfo, setExtraInfo] = useState("");
-  const [checkInTime, setCheckInTime] = useState("");
-  const [checkOutTime, setCheckOutTime] = useState("");
+  const [checkIn, setCheckIn] = useState("");
+  const [checkOut, setCheckOut] = useState("");
   const [maxGuests, setMaxGuests] = useState(1);
   const [addedPhotos, setAddedPhotos] = useState([]);
   const [redirect, setRedirect] = useState(false);
@@ -26,8 +26,8 @@ const PropertiesFormPage = () => {
         setDescription(data.description);
         setFeatures(data.features);
         setExtraInfo(data.extraInfo);
-        setCheckInTime(data.checkInTime);
-        setCheckOutTime(data.checkOutTime);
+        setCheckIn(data.checkIn);
+        setCheckOut(data.checkOut);
         setMaxGuests(data.maxGuests);
         setAddedPhotos(data.photos);
       });
@@ -49,20 +49,31 @@ const PropertiesFormPage = () => {
     );
   }
 
-  async function addNewPlace(e) {
+  async function saveProperty(e) {
     e.preventDefault();
-    await axios.post("/properties", {
+    const propertyData = {
       title,
       address,
       description,
       features,
       extraInfo,
-      checkInTime,
-      checkOutTime,
+      checkIn,
+      checkOut,
       maxGuests,
       addedPhotos,
-    });
-    setRedirect(true);
+    };
+    if (id) {
+      await axios.put("/properties/", {
+        id,
+        ...propertyData,
+      });
+      setRedirect(true);
+    } else {
+      await axios.post("/properties", {
+        ...propertyData,
+      });
+      setRedirect(true);
+    }
   }
 
   if (redirect) {
@@ -73,7 +84,7 @@ const PropertiesFormPage = () => {
     <>
       <div>
         <AccountNav />
-        <form onSubmit={addNewPlace}>
+        <form onSubmit={saveProperty}>
           <h1 className="text-xl">Property Details</h1>
           {preInput(
             "Title",
@@ -125,8 +136,8 @@ const PropertiesFormPage = () => {
               <h3 className="mt-2 ml-3 -mb-1">Check In</h3>
               <input
                 type="text"
-                value={checkInTime}
-                onChange={(e) => setCheckInTime(e.target.value)}
+                value={checkIn}
+                onChange={(e) => setCheckIn(e.target.value)}
                 placeholder="15:00"
               />
             </div>
@@ -134,8 +145,8 @@ const PropertiesFormPage = () => {
               <h3 className="mt-2 ml-3 -mb-1">Check Out</h3>
               <input
                 type="text"
-                value={checkOutTime}
-                onChange={(e) => setCheckOutTime(e.target.value)}
+                value={checkOut}
+                onChange={(e) => setCheckOut(e.target.value)}
                 placeholder="10:00"
               />
             </div>
