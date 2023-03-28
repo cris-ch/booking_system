@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { MdFileUpload } from "react-icons/md";
 import { FaRegTrashAlt } from "react-icons/fa";
+import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 
 const PhotosUploader = ({ addedPhotos, onChange }) => {
   const [photoLink, setPhotoLink] = useState("");
@@ -41,6 +42,17 @@ const PhotosUploader = ({ addedPhotos, onChange }) => {
     onChange([...addedPhotos.filter((photo) => photo !== filename)]);
   }
 
+  function selectAsMainPhoto(filename, e) {
+    e.preventDefault();
+    const photoIndex = addedPhotos.indexOf(filename);
+    const newPhotos = [...addedPhotos];
+    if (photoIndex !== 0) {
+      newPhotos.splice(photoIndex, 1);
+      newPhotos.unshift(filename);
+      onChange(newPhotos);
+    }
+  }
+
   return (
     <>
       <div className="flex gap-2">
@@ -66,9 +78,28 @@ const PhotosUploader = ({ addedPhotos, onChange }) => {
                 className="rounded-2xl w-full object-cover position-center"
                 src={`http://localhost:4000/uploads/${photo}`}
               />
-              <button onClick={(e) => deletePhoto(photo, e)} className="absolute bottom-1 right-1 text-white bg-black bg-opacity-50 rounded-2xl py-1 px-2">
+              <button
+                onClick={(e) => deletePhoto(photo, e)}
+                className="absolute bottom-1 right-1 text-white bg-black bg-opacity-50 rounded-2xl py-1 px-2"
+              >
                 <FaRegTrashAlt />
               </button>
+              {index === 0 && (
+                <button
+                  onClick={(e) => selectAsMainPhoto(photo, e)}
+                  className="absolute bottom-1 left-1 text-white bg-black bg-opacity-50 rounded-2xl py-1 px-2"
+                >
+                  <AiFillStar />
+                </button>
+              )}
+              {index !== 0 && (
+                <button
+                  onClick={(e) => selectAsMainPhoto(photo, e)}
+                  className="absolute bottom-1 left-1 text-white bg-black bg-opacity-50 rounded-2xl py-1 px-2"
+                >
+                  <AiOutlineStar />
+                </button>
+              )}
             </div>
           ))}
         <label className="h-32 flex cursor-pointer justify-center gap-1 border bg-transparent rounded-2xl p-2 items-center text-2xl text-gray-600">
