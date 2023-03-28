@@ -183,7 +183,7 @@ app.put("/properties", async (req, res) => {
     title,
     address,
     description,
-    photos: addedPhotos,
+    addedPhotos,
     features,
     extraInfo,
     checkIn,
