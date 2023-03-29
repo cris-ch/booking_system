@@ -44,14 +44,13 @@ const PhotosUploader = ({ addedPhotos, onChange }) => {
 
   function selectAsMainPhoto(filename, e) {
     e.preventDefault();
-    const photoIndex = addedPhotos.indexOf(filename);
-    const newPhotos = [...addedPhotos];
-    if (photoIndex !== 0) {
-      newPhotos.splice(photoIndex, 1);
-      newPhotos.unshift(filename);
-      onChange(newPhotos);
-    }
+    const newPhotos = [
+      filename,
+      ...addedPhotos.filter((photo) => photo !== filename),
+    ];
+    onChange(newPhotos);
   }
+  
 
   return (
     <>
