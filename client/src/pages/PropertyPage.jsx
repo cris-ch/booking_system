@@ -6,6 +6,7 @@ import { BsChevronDoubleLeft, BsGrid3X3GapFill } from "react-icons/bs";
 import { BiMap } from "react-icons/bi";
 import Gallery from "react-photo-gallery";
 import Carousel, { Modal, ModalGateway } from "react-images";
+import BookingWidget from "../BookingWidget";
 
 const PropertyPage = () => {
   const { id } = useParams();
@@ -153,6 +154,20 @@ const PropertyPage = () => {
           Show all photos
         </button>
       </div>
+
+      <div className="mt-8 gap-8 grid grid-cols-1 md:grid-cols-[2fr_1fr]">
+        <div className="">
+          <div className="my-4">{property.description}</div>
+          Check-In: {property.checkIn}:00hs <br />
+          Check-Out: {property.checkOut}:00hs <br />
+          Guests: {property.maxGuests} <br />
+        </div>
+        <div className="">
+          <BookingWidget property={property} />
+        </div>
+      </div>
+      <div className="font-semibold mt-6">Extra Info</div>
+      <div className="text-gray-600 my-2 text-m leading-5">{property.extraInfo}</div>
     </div>
   );
 };
