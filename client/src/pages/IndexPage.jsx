@@ -21,9 +21,16 @@ const IndexPage = () => {
                 />
               )}
             </div>
-            <h2 className="text-sm text-left truncate leading-3">{property.title}</h2>
-            <h3 className="text-sm text-left font-bold mt-1 leading-3">{property.address}</h3>
-            <h3 className="text-sm text-left mt-1 leading-3">{`$${property.price}`}</h3>
+            <h2 className="font-bold">
+              {property.address}
+            </h2>
+            <h3 className="text-md truncate text-gray-500">
+              {property.title}
+            </h3>
+
+            <div className="text-sm text-left mt-2">
+              <span className="font-bold"> ${property.price}</span> per night
+            </div>
           </div>
         ))}
     </div>
