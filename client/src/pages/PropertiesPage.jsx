@@ -8,7 +8,7 @@ import axios from 'axios';
 const PropertiesPage = () => {
   const [properties, setProperties] = useState([]);
   useEffect(() => {
-    axios.get('/properties').then(({ data }) => {
+    axios.get('/user-properties').then(({ data }) => {
       console.log(data)
       setProperties(data);
     })

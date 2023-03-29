@@ -124,12 +124,13 @@ app.post("/properties", async (req, res) => {
     title,
     address,
     description,
-    photos: addedPhotos,
+    addedPhotos,
     features,
     extraInfo,
     checkIn,
     checkOut,
     maxGuests,
+    price
   } = req.body;
   if (token) {
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
@@ -139,12 +140,13 @@ app.post("/properties", async (req, res) => {
         title,
         address,
         description,
-        addedPhotos,
+        photos: addedPhotos,
         features,
         extraInfo,
         checkIn,
         checkOut,
         maxGuests,
+        price
       });
       res.json(propertyDoc);
     });
@@ -154,7 +156,7 @@ app.post("/properties", async (req, res) => {
   }
 });
 
-app.get("/properties", async (req, res) => {
+app.get("/user-properties", async (req, res) => {
   const { token } = req.cookies;
   if (token) {
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
@@ -189,6 +191,7 @@ app.put("/properties", async (req, res) => {
     checkIn,
     checkOut,
     maxGuests,
+    price
   } = req.body;
   console.log("request body", req.body)
   console.log("checkIn", checkIn, "checkOut", checkOut)
@@ -207,11 +210,17 @@ app.put("/properties", async (req, res) => {
         checkIn,
         checkOut,
         maxGuests,
+        price
       });
       await propertyDoc.save()
       res.json('ok');
     }
   });
+});
+
+app.get("/properties", async (req, res) => {
+  const properties = await Property.find();
+  res.json(properties);
 });
 
 app.listen(4000);

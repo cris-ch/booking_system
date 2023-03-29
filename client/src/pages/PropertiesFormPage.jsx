@@ -16,6 +16,7 @@ const PropertiesFormPage = () => {
   const [checkOut, setCheckOut] = useState("");
   const [maxGuests, setMaxGuests] = useState(1);
   const [addedPhotos, setAddedPhotos] = useState([]);
+  const [price, setPrice] = useState(0);
   const [redirect, setRedirect] = useState(false);
 
   useEffect(() => {
@@ -30,6 +31,7 @@ const PropertiesFormPage = () => {
         setCheckOut(data.checkOut);
         setMaxGuests(data.maxGuests);
         setAddedPhotos(data.photos);
+        setPrice(data.price);
       });
     }
   }, [id]);
@@ -61,6 +63,7 @@ const PropertiesFormPage = () => {
       checkOut,
       maxGuests,
       addedPhotos,
+      price,
     };
     if (id) {
       await axios.put("/properties/", {
@@ -128,10 +131,10 @@ const PropertiesFormPage = () => {
             placeholder="Extra Info"
           />
           {preInput(
-            "Check In/Out. Max Number of Guests",
-            "Enter the check in and check out times."
+            "Check In/Out Times",
+            "Enter the check in and check out times for your property."
           )}
-          <div className="grid mt-2 gap-2 sm:grid-cols-3">
+          <div className="grid mt-2 gap-2 grid-cols-2">
             <div>
               <h3 className="mt-2 ml-3 -mb-1">Check In</h3>
               <input
@@ -150,7 +153,12 @@ const PropertiesFormPage = () => {
                 placeholder="10:00"
               />
             </div>
-            <div>
+          </div>
+          {preInput(
+            "Max Number of Guests",
+            "Enter the maximum number of guests your property can accommodate."
+          )}
+          <div>
               <h3 className="mt-2 ml-3 -mb-1">Max. Number of Guests</h3>
               <input
                 type="number"
@@ -159,7 +167,19 @@ const PropertiesFormPage = () => {
                 placeholder="5 guests"
               />
             </div>
-          </div>
+            {preInput(
+            "Price per Night",
+            "Enter the price per night for your property."
+          )}
+            <div>
+              <h3 className="mt-2 ml-3 -mb-1">Price per Night</h3>
+              <input
+                type="number"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                placeholder="100"
+              />
+            </div>
           <div className=" flex justify-center">
             <button className="primary my-10 max-w-[40%]">Save</button>
           </div>
