@@ -101,7 +101,7 @@ const PropertyPage = () => {
   }
 
   return (
-    <div className="mt-4 bg-gray-100 -mx-8 px-8 py-6">
+    <div className="mt-4 bg-gray-100 -mx-8 px-8">
       <h1 className="text-2xl">{property.title}</h1>
       <a
         className="my-1 ml-1 block font-semibold underline flex items-center"
@@ -166,8 +166,11 @@ const PropertyPage = () => {
           <BookingWidget property={property} />
         </div>
       </div>
-      <div className="font-semibold mt-6">Extra Info</div>
+      <div className="bg-white -mx-8 -mb-4 pb-16 border-t mt-6 px-6">
+      <div className="font-semibold mt-6 pt-3">Extra Info</div>
       <div className="text-gray-600 my-2 text-m leading-5">{property.extraInfo}</div>
+      </div>
+
     </div>
   );
 };
