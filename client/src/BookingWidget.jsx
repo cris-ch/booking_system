@@ -1,6 +1,6 @@
 import React from "react";
 
-const BookingWidget = (property) => {
+const BookingWidget = ({property}) => {
   return (
     <div className="bg-white shadow p-3 rounded-2xl">
       <div className="text-xl text-center">
@@ -19,7 +19,7 @@ const BookingWidget = (property) => {
         </div>
         <div className="py-3 px-4">
           <label>Number of Guests:</label>
-          <input type="number" value={1} />
+          <input type="number" />
         </div>
       </div>
 
