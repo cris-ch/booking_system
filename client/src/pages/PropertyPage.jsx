@@ -2,7 +2,8 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
-import { BsChevronDoubleLeft, BsGrid3X3GapFill } from "react-icons/bs";
+import { BsGrid3X3GapFill } from "react-icons/bs";
+import { IoCloseOutline } from "react-icons/io5";
 import { BiMap } from "react-icons/bi";
 import Gallery from "react-photo-gallery";
 import Carousel, { Modal, ModalGateway } from "react-images";
@@ -72,9 +73,10 @@ const PropertyPage = () => {
           <div className="fixed">
             <button
               onClick={() => setShowAllPhotos(false)}
-              className="flex items-center gap-1 py-1 px-1 bg-white rounded-xl shadow shadow-md shadow-gray-500"
+              className="flex items-center gap-1 py-1 px-1 bg-white rounded-xl shadow shadow-md shadow-gray-500 "
             >
-              <BsChevronDoubleLeft />
+              <IoCloseOutline />
+              Close
             </button>
           </div>
           <div>
@@ -118,6 +120,7 @@ const PropertyPage = () => {
             {property.photos?.[0] && (
               <div className="">
                 <img
+                  onClick={() => setShowAllPhotos(true)}
                   className="aspect-square object-cover"
                   src={"http://localhost:4000/uploads/" + property.photos[0]}
                   alt=""
@@ -128,6 +131,7 @@ const PropertyPage = () => {
           <div className="grid ">
             {property.photos?.[1] && (
               <img
+                onClick={() => setShowAllPhotos(true)}
                 className="aspect-square object-cover"
                 src={"http://localhost:4000/uploads/" + property.photos[1]}
                 alt=""
@@ -137,6 +141,7 @@ const PropertyPage = () => {
               {property.photos?.[2] && (
                 <div className="">
                   <img
+                    onClick={() => setShowAllPhotos(true)}
                     className="aspect-square object-cover relative top-2"
                     src={"http://localhost:4000/uploads/" + property.photos[2]}
                     alt=""
@@ -167,10 +172,11 @@ const PropertyPage = () => {
         </div>
       </div>
       <div className="bg-white -mx-8 -mb-4 pb-16 border-t mt-6 px-6">
-      <div className="font-semibold mt-6 pt-3">Extra Info</div>
-      <div className="text-gray-600 my-2 text-m leading-5">{property.extraInfo}</div>
+        <div className="font-semibold mt-6 pt-3">Extra Info</div>
+        <div className="text-gray-600 my-2 text-m leading-5">
+          {property.extraInfo}
+        </div>
       </div>
-
     </div>
   );
 };
