@@ -36,71 +36,72 @@ const PropertyPage = () => {
 
   if (!property) return null;
 
-  // if (showAllPhotos) {
-  //   return (
-  //     <div className="absolute inset-0 bg-white ">
-  //       <div className="p-6 grid gap-1">
-  //         <div className="fixed">
-  //           <button
-  //             onClick={() => setShowAllPhotos(false)}
-  //             className="flex items-center gap-1 py-1 px-1 bg-white rounded-xl shadow shadow-md shadow-gray-500"
-  //           >
-  //             <BsChevronDoubleLeft />
-  //           </button>
-  //         </div>
-  //         {property?.photos?.length > 0 &&
-  //           property.photos.map((photo) => (
-  //             <div className="mt-8" key={photo}>
-  //               <img src={"http://localhost:4000/uploads/" + photo} alt="" />
-  //             </div>
-  //           ))}
-  //       </div>
-  //     </div>
-  //   );
-  // }
-
   if (showAllPhotos) {
-    const photos = property.photos.map((photo) => {
-      return {
-        src: "http://localhost:4000/uploads/" + photo,
-        width: 4,
-        height: 3,
-      };
-    });
     return (
       <div className="absolute inset-0 bg-white ">
         <div className="p-6 grid gap-1">
           <div className="fixed">
             <button
               onClick={() => setShowAllPhotos(false)}
-              className="flex items-center gap-1 py-1 px-1 bg-white rounded-xl shadow shadow-md shadow-gray-500 "
+              className="flex items-center gap-1 py-1 px-1 bg-white rounded-xl shadow shadow-md shadow-gray-500"
             >
               <IoCloseOutline />
               Close
             </button>
           </div>
-          <div>
-            <Gallery photos={photos} onClick={openLightbox} />
-            <ModalGateway>
-              {viewerIsOpen ? (
-                <Modal onClose={closeLightbox}>
-                  <Carousel
-                    currentIndex={currentImage}
-                    views={photos.map((x) => ({
-                      ...x,
-                      srcset: x.srcSet,
-                      caption: x.title,
-                    }))}
-                    centerSlidePercentage={100} // Set this property to center slides
-                  />
-                </Modal>
-              ) : null}
-            </ModalGateway>
-          </div>
+          {property?.photos?.length > 0 &&
+            property.photos.map((photo) => (
+              <div className="mt-8" key={photo}>
+                <img src={"http://localhost:4000/uploads/" + photo} alt="" />
+              </div>
+            ))}
         </div>
       </div>
     );
   }
+
+  // if (showAllPhotos) {
+  //   const photos = property.photos.map((photo) => {
+  //     return {
+  //       src: "http://localhost:4000/uploads/" + photo,
+  //       width: 4,
+  //       height: 3,
+  //     };
+  //   });
+  //   return (
+  //     <div className="absolute inset-0 bg-white ">
+  //       <div className="p-6 grid gap-1">
+  //         <div className="fixed">
+  //           <button
+  //             onClick={() => setShowAllPhotos(false)}
+  //             className="flex items-center gap-1 py-1 px-1 bg-white rounded-xl shadow shadow-md shadow-gray-500 "
+  //           >
+  //             <IoCloseOutline />
+  //             Close
+  //           </button>
+  //         </div>
+  //         <div>
+  //           <Gallery photos={photos} onClick={openLightbox} />
+  //           <ModalGateway>
+  //             {viewerIsOpen ? (
+  //               <Modal onClose={closeLightbox}>
+  //                 <Carousel
+  //                   currentIndex={currentImage}
+  //                   views={photos.map((x) => ({
+  //                     ...x,
+  //                     srcset: x.srcSet,
+  //                     caption: x.title,
+  //                   }))}
+  //                   centerSlidePercentage={100} // Set this property to center slides
+  //                 />
+  //               </Modal>
+  //             ) : null}
+  //           </ModalGateway>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="mt-4 bg-gray-100 -mx-8 px-8">
