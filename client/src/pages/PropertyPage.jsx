@@ -5,8 +5,6 @@ import axios from "axios";
 import { BsGrid3X3GapFill } from "react-icons/bs";
 import { IoCloseOutline } from "react-icons/io5";
 import { BiMap } from "react-icons/bi";
-import Gallery from "react-photo-gallery";
-import Carousel, { Modal, ModalGateway } from "react-images";
 import BookingWidget from "../BookingWidget";
 
 const PropertyPage = () => {
