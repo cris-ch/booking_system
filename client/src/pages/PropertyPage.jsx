@@ -6,6 +6,7 @@ import { BsGrid3X3GapFill } from "react-icons/bs";
 import { IoCloseOutline } from "react-icons/io5";
 import { BiMap } from "react-icons/bi";
 import BookingWidget from "../BookingWidget";
+import Image from "../Image";
 
 const PropertyPage = () => {
   const { id } = useParams();
@@ -50,7 +51,7 @@ const PropertyPage = () => {
           {property?.photos?.length > 0 &&
             property.photos.map((photo) => (
               <div className="mt-8" key={photo}>
-                <img src={"http://localhost:4000/uploads/" + photo} alt="" />
+                <Image src={photo} alt="" />
               </div>
             ))}
         </div>
@@ -118,10 +119,10 @@ const PropertyPage = () => {
           <div className="">
             {property.photos?.[0] && (
               <div className="">
-                <img
+                <Image
                   onClick={() => setShowAllPhotos(true)}
                   className="aspect-square object-cover"
-                  src={"http://localhost:4000/uploads/" + property.photos[0]}
+                  src={property.photos[0]}
                   alt=""
                 />
               </div>
@@ -129,20 +130,20 @@ const PropertyPage = () => {
           </div>
           <div className="grid ">
             {property.photos?.[1] && (
-              <img
+              <Image
                 onClick={() => setShowAllPhotos(true)}
                 className="aspect-square object-cover"
-                src={"http://localhost:4000/uploads/" + property.photos[1]}
+                src={property.photos[1]}
                 alt=""
               />
             )}
             <div className="overflow-hidden">
               {property.photos?.[2] && (
                 <div className="">
-                  <img
+                  <Image
                     onClick={() => setShowAllPhotos(true)}
                     className="aspect-square object-cover relative top-2"
-                    src={"http://localhost:4000/uploads/" + property.photos[2]}
+                    src={property.photos[2]}
                     alt=""
                   />
                 </div>

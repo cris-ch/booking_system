@@ -3,6 +3,7 @@ import axios from "axios";
 import { MdFileUpload } from "react-icons/md";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
+import Image from "./Image";
 
 const PhotosUploader = ({ addedPhotos, onChange }) => {
   const [photoLink, setPhotoLink] = useState("");
@@ -73,9 +74,9 @@ const PhotosUploader = ({ addedPhotos, onChange }) => {
         {addedPhotos.length > 0 &&
           addedPhotos.map((photo, index) => (
             <div key={index} className="h-32 flex relative">
-              <img
+              <Image
                 className="rounded-2xl w-full object-cover position-center"
-                src={`http://localhost:4000/uploads/${photo}`}
+                src={photo}
               />
               <button
                 onClick={(e) => deletePhoto(photo, e)}

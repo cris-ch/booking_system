@@ -4,6 +4,7 @@ import NewPropertyForm from "../NewPropertyForm";
 import { MdOutlineExposurePlus1 } from "react-icons/md";
 import AccountNav from "../AccountNav";
 import axios from 'axios';
+import Image from "../Image";
 
 const PropertiesPage = () => {
   const [properties, setProperties] = useState([]);
@@ -28,9 +29,9 @@ const PropertiesPage = () => {
       <div className="mt-4">
         {properties.length > 0 && properties.map((property, idx) => (
           <Link to={'/account/properties/'+property._id} className="cursor-pointer flex gap-4 bg-gray-300 p-4 rounded-2xl" key={idx}>
-            <div className="flex w-45 h-40 bg-gray-400 grow shrink-0">
+            <div className="flex w-40 h-40 bg-gray-400 grow shrink-0">
               {property.photos.length > 0 && (
-                <img className="object-cover" src={"http://localhost:4000/uploads/"+property.photos[0]} alt="property photo" />  
+                <Image className="object-cover aspect-square" src={property.photos[0]} alt="property photo" />  
               )}
             </div>
             <div className="grow-0 shrink">
