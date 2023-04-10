@@ -7,13 +7,14 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const CookieParser = require("cookie-parser");
 const imageDownloader = require("image-downloader");
-const multer = require("multer");
 const fs = require("fs");
-
+const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
+const multer = require("multer");
 const app = express();
 
 const bcryptSalt = bcrypt.genSaltSync(10);
 const jwtSecret = "erboejrnberojfn";
+const bucket = "cristian-booking-app";
 
 require("dotenv").config();
 
@@ -28,6 +29,29 @@ app.use(
 );
 
 mongoose.connect(process.env.MONGO_URL);
+
+const uploadToS3 = async (path, originalFileName, mimeType) => {
+  const client = new S3Client({
+    region: "eu-north-1",
+    credentials: {
+      accessKeyId: process.env.S3_ACCESS_KEY,
+      secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+    },
+  });
+  const parts = originalFileName.split(".");
+  const extension = parts[parts.length - 1];
+  const newFileName = "photo" + Date.now() + "." + extension;
+  await client.send(
+    new PutObjectCommand({
+      Bucket: bucket,
+      Body: fs.readFileSync(path),
+      Key: newFileName,
+      ContentType: mimeType,
+      ACL: "public-read",
+    })
+  );
+  return `https://${bucket}.s3.amazonaws.com/${newFileName}`;
+};
 
 app.get("/test", (req, res) => {
   res.send("Hello World!");
@@ -94,7 +118,6 @@ app.post("/logout", (req, res) => {
 
 app.post("/upload-by-url", async (req, res) => {
   const { url } = req.body;
-  console.log("url", url);
   const newName = "photo" + Date.now() + ".jpg";
 
   await imageDownloader.image({
@@ -104,16 +127,13 @@ app.post("/upload-by-url", async (req, res) => {
   res.json(newName);
 });
 
-const photosMiddleware = multer({ dest: "uploads" });
-app.post("/upload", photosMiddleware.array("photos", 10), (req, res) => {
+const photosMiddleware = multer({ dest: "/tmp" });
+app.post("/upload", photosMiddleware.array("photos", 20), async (req, res) => {
   const uploadedFiles = [];
   for (let i = 0; i < req.files.length; i++) {
-    const { path, originalname } = req.files[i];
-    const nameParts = originalname.split(".");
-    const extension = nameParts[nameParts.length - 1];
-    const newPath = path + "." + extension;
-    fs.renameSync(path, newPath);
-    uploadedFiles.push(newPath.replace("uploads/", ""));
+    const { path, originalname, mimetype } = req.files[i];
+    const url = await uploadToS3(path, originalname, mimetype);
+    uploadedFiles.push(url);
   }
   res.json(uploadedFiles);
 });
@@ -130,7 +150,7 @@ app.post("/properties", async (req, res) => {
     checkIn,
     checkOut,
     maxGuests,
-    price
+    price,
   } = req.body;
   if (token) {
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
@@ -146,11 +166,10 @@ app.post("/properties", async (req, res) => {
         checkIn,
         checkOut,
         maxGuests,
-        price
+        price,
       });
       res.json(propertyDoc);
     });
-
   } else {
     res.json(null);
   }
@@ -191,14 +210,12 @@ app.put("/properties", async (req, res) => {
     checkIn,
     checkOut,
     maxGuests,
-    price
+    price,
   } = req.body;
-  console.log("request body", req.body)
-  console.log("checkIn", checkIn, "checkOut", checkOut)
+
   jwt.verify(token, jwtSecret, {}, async (err, userData) => {
     if (err) throw err;
     const propertyDoc = await Property.findById(id);
-    console.log("propertyDoc", propertyDoc, "user id", userData.id);
     if (propertyDoc.owner.toString() === userData.id) {
       propertyDoc.set({
         title,
@@ -210,10 +227,10 @@ app.put("/properties", async (req, res) => {
         checkIn,
         checkOut,
         maxGuests,
-        price
+        price,
       });
-      await propertyDoc.save()
-      res.json('ok');
+      await propertyDoc.save();
+      res.json("ok");
     }
   });
 });
