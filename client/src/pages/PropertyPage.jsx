@@ -7,23 +7,13 @@ import { IoCloseOutline } from "react-icons/io5";
 import { BiMap } from "react-icons/bi";
 import BookingWidget from "../BookingWidget";
 import Image from "../Image";
+import ImageGallery from "react-image-gallery";
+import "react-image-gallery/styles/css/image-gallery.css";
 
 const PropertyPage = () => {
   const { id } = useParams();
   const [property, setProperty] = useState("");
   const [showAllPhotos, setShowAllPhotos] = useState(false);
-  const [currentImage, setCurrentImage] = useState(0);
-  const [viewerIsOpen, setViewerIsOpen] = useState(false);
-
-  const openLightbox = useCallback((event, { photo, index }) => {
-    setCurrentImage(index);
-    setViewerIsOpen(true);
-  }, []);
-
-  const closeLightbox = () => {
-    setCurrentImage(0);
-    setViewerIsOpen(false);
-  };
 
   useEffect(() => {
     if (!id) return;
@@ -36,71 +26,33 @@ const PropertyPage = () => {
   if (!property) return null;
 
   if (showAllPhotos) {
+    const images = property.photos.map((photo) => ({
+      original: photo,
+      thumbnail: photo,
+    }));
+
     return (
-      <div className="absolute inset-0 bg-white ">
-        <div className="p-6 grid gap-1">
-          <div className="fixed">
-            <button
-              onClick={() => setShowAllPhotos(false)}
-              className="flex items-center gap-1 py-1 px-1 bg-white rounded-xl shadow shadow-md shadow-gray-500"
-            >
-              <IoCloseOutline />
-              Close
-            </button>
+      <div className="fixed inset-0 bg-black">
+        <div className="p-6 grid gap-1 relative">
+          <button
+            onClick={() => setShowAllPhotos(false)}
+            className="z-50 absolute top-5 right-5 flex items-center gap-1 py-1 px-1 bg-white rounded-xl shadow shadow-sm shadow-white"
+          >
+            <IoCloseOutline />
+          </button>
+          <div>
+            <ImageGallery
+              items={images}
+              showFullscreenButton={false}
+              thumbnailWidth={100}
+              thumbnailHeight={100}
+              showBullets={true}
+            />
           </div>
-          {property?.photos?.length > 0 &&
-            property.photos.map((photo) => (
-              <div className="mt-8" key={photo}>
-                <Image src={photo} alt="" />
-              </div>
-            ))}
         </div>
       </div>
     );
   }
-
-  // if (showAllPhotos) {
-  //   const photos = property.photos.map((photo) => {
-  //     return {
-  //       src: "http://localhost:4000/uploads/" + photo,
-  //       width: 4,
-  //       height: 3,
-  //     };
-  //   });
-  //   return (
-  //     <div className="absolute inset-0 bg-white ">
-  //       <div className="p-6 grid gap-1">
-  //         <div className="fixed">
-  //           <button
-  //             onClick={() => setShowAllPhotos(false)}
-  //             className="flex items-center gap-1 py-1 px-1 bg-white rounded-xl shadow shadow-md shadow-gray-500 "
-  //           >
-  //             <IoCloseOutline />
-  //             Close
-  //           </button>
-  //         </div>
-  //         <div>
-  //           <Gallery photos={photos} onClick={openLightbox} />
-  //           <ModalGateway>
-  //             {viewerIsOpen ? (
-  //               <Modal onClose={closeLightbox}>
-  //                 <Carousel
-  //                   currentIndex={currentImage}
-  //                   views={photos.map((x) => ({
-  //                     ...x,
-  //                     srcset: x.srcSet,
-  //                     caption: x.title,
-  //                   }))}
-  //                   centerSlidePercentage={100} // Set this property to center slides
-  //                 />
-  //               </Modal>
-  //             ) : null}
-  //           </ModalGateway>
-  //         </div>
-  //       </div>
-  //     </div>
-  //   );
-  // }
 
   return (
     <div className="mt-4 bg-gray-100 -mx-8 px-8">
@@ -151,6 +103,7 @@ const PropertyPage = () => {
             </div>
           </div>
         </div>
+
         <button
           onClick={() => setShowAllPhotos(true)}
           className="flex items-center gap-1 absolute bottom-2 right-2 py-1 px-3 bg-white rounded-xl shadow shadow-md shadow-gray-500"
