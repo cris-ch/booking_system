@@ -55,10 +55,10 @@ const PropertyPage = () => {
   }
 
   return (
-    <div className="mt-4 bg-gray-100 -mx-8 px-8">
+    <div className="mt-4 -mx-8 px-8 border-t pt-4">
       <h1 className="text-2xl">{property.title}</h1>
       <a
-        className="my-1 ml-1 block font-semibold underline flex items-center"
+        className="my-1 ml-1 block underline flex items-center"
         target="_blank"
         href={"https://maps.google.com/?q=" + property.address}
       >
@@ -66,7 +66,7 @@ const PropertyPage = () => {
         {property.address}
       </a>
 
-      <div className="relative">
+      <div className="photos relative">
         <div className="grid gap-2 grid-cols-[2fr_1fr] rounded-2xl overflow-hidden">
           <div className="">
             {property.photos?.[0] && (
