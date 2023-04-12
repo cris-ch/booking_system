@@ -1,18 +1,18 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import NewPropertyForm from "../NewPropertyForm";
 import { MdOutlineExposurePlus1 } from "react-icons/md";
 import AccountNav from "../AccountNav";
-import axios from 'axios';
+import axios from "axios";
 import Image from "../Image";
 
 const PropertiesPage = () => {
   const [properties, setProperties] = useState([]);
   useEffect(() => {
-    axios.get('/user-properties').then(({ data }) => {
-      console.log(data)
+    axios.get("/user-properties").then(({ data }) => {
+      console.log(data);
       setProperties(data);
-    })
+    });
   }, []);
   return (
     <div>
@@ -27,19 +27,30 @@ const PropertiesPage = () => {
         </Link>
       </div>
       <div className="mt-4">
-        {properties.length > 0 && properties.map((property, idx) => (
-          <Link to={'/account/properties/'+property._id} className="cursor-pointer flex gap-4 bg-gray-300 p-4 rounded-2xl" key={idx}>
-            <div className="flex w-40 h-40 bg-gray-400 grow shrink-0">
-              {property.photos.length > 0 && (
-                <Image className="object-cover aspect-square" src={property.photos[0]} alt="property photo" />  
-              )}
-            </div>
-            <div className="grow-0 shrink">
-            <h2 className="text-xl">{property.title}</h2>
-            <p>{property.description}</p>
-            </div>
-          </Link>
-        ))}
+        {properties.length > 0 &&
+          properties.map((property, idx) => (
+            <Link
+              to={"/account/properties/" + property._id}
+              className="cursor-pointer flex gap-4 bg-gray-300 p-4 rounded-2xl mb-2"
+              key={idx}
+            >
+              <div className="flex w-48 h-48 rounded-2xl overflow-hidden">
+                {property.photos.length > 0 && (
+                  <Image
+                    className="object-cover w-full h-full"
+                    src={property.photos[0]}
+                    alt="property photo"
+                  />
+                )}
+              </div>
+              <div className="flex-1">
+                <h2 className="text-xl">{property.title}</h2>
+                <p className="max-h-36 overflow-hidden">
+                  {property.description}
+                </p>
+              </div>
+            </Link>
+          ))}
       </div>
     </div>
   );
