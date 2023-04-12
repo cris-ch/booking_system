@@ -17,6 +17,7 @@ const PropertiesFormPage = () => {
   const [maxGuests, setMaxGuests] = useState(1);
   const [addedPhotos, setAddedPhotos] = useState([]);
   const [price, setPrice] = useState(0);
+  const [cleaningFee, setCleaningFee] = useState(0);
   const [redirect, setRedirect] = useState(false);
 
   useEffect(() => {
@@ -32,6 +33,7 @@ const PropertiesFormPage = () => {
         setMaxGuests(data.maxGuests);
         setAddedPhotos(data.photos);
         setPrice(data.price);
+        setCleaningFee(data.cleaningFee);
       });
     }
   }, [id]);
@@ -64,7 +66,14 @@ const PropertiesFormPage = () => {
       maxGuests,
       addedPhotos,
       price,
+      cleaningFee,
     };
+
+
+  {
+    console.log("saving property")
+    console.log({propertyData})
+  }
     if (id) {
       await axios.put("/properties/", {
         id,
@@ -159,27 +168,42 @@ const PropertiesFormPage = () => {
             "Enter the maximum number of guests your property can accommodate."
           )}
           <div>
-              <h3 className="mt-2 ml-3 -mb-1">Max. Number of Guests</h3>
-              <input
-                type="number"
-                value={maxGuests}
-                onChange={(e) => setMaxGuests(e.target.value)}
-                placeholder="5 guests"
-              />
-            </div>
-            {preInput(
+            <h3 className="mt-2 ml-3 -mb-1">Max. Number of Guests</h3>
+            <input
+              type="number"
+              value={maxGuests}
+              onChange={(e) => setMaxGuests(e.target.value)}
+              placeholder="5 guests"
+            />
+          </div>
+          {preInput(
+            "Cleaning Fee",
+            "Enter the cleaning fee for your property."
+          )}
+          <div>
+            <h3 className="mt-2 ml-3 -mb-1">Cleaning Fee</h3>
+            <input
+              type="number"
+              value={cleaningFee}
+              onChange={(e) => setCleaningFee(e.target.value)}
+              placeholder="100"
+            />
+          </div>
+          {preInput(
             "Price per Night",
             "Enter the price per night for your property."
           )}
-            <div>
-              <h3 className="mt-2 ml-3 -mb-1">Price per Night</h3>
-              <input
-                type="number"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-                placeholder="100"
-              />
-            </div>
+
+          <div>
+            <h3 className="mt-2 ml-3 -mb-1">Price per Night</h3>
+            <input
+              type="number"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              placeholder="0"
+            />
+          </div>
+
           <div className=" flex justify-center">
             <button className="primary my-10 max-w-[40%]">Save</button>
           </div>

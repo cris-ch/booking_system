@@ -159,6 +159,7 @@ app.post("/api/properties", async (req, res) => {
     checkOut,
     maxGuests,
     price,
+    cleaningFee,
   } = req.body;
   if (token) {
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
@@ -175,6 +176,7 @@ app.post("/api/properties", async (req, res) => {
         checkOut,
         maxGuests,
         price,
+        cleaningFee,
       });
       res.json(propertyDoc);
     });
@@ -222,6 +224,7 @@ app.put("/api/properties", async (req, res) => {
     checkOut,
     maxGuests,
     price,
+    cleaningFee
   } = req.body;
 
   jwt.verify(token, jwtSecret, {}, async (err, userData) => {
@@ -239,6 +242,7 @@ app.put("/api/properties", async (req, res) => {
         checkOut,
         maxGuests,
         price,
+        cleaningFee
       });
       await propertyDoc.save();
       res.json("ok");

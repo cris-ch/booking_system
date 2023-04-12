@@ -115,7 +115,7 @@ const PropertyPage = () => {
 
       <div className="mt-8 gap-8 grid grid-cols-1 md:grid-cols-[2fr_1fr]">
         <div className="">
-          <div className="my-4">{property.description}</div>
+          <div className="my-4 font-light">{property.description}</div>
           Check-In: {property.checkIn}:00hs <br />
           Check-Out: {property.checkOut}:00hs <br />
           Guests: {property.maxGuests} <br />
