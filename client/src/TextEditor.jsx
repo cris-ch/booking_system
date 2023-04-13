@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import DOMPurify from 'dompurify';
 
 function Editor({ placeholder, value, onChange }) {
   const modules = {
@@ -41,10 +42,15 @@ function Editor({ placeholder, value, onChange }) {
     'video',
   ];
 
+  const handleOnChange = (value) => {
+    const cleanValue = DOMPurify.sanitize(value);
+    onChange(cleanValue);
+  };
+
   return (
     <ReactQuill
       theme="snow"
-      onChange={onChange}
+      onChange={handleOnChange}
       value={value}
       modules={modules}
       formats={formats}
