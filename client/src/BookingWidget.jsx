@@ -55,21 +55,21 @@ const BookingWidget = ({ property }) => {
       </div>
       <div className="flex justify-between items-center text-center p-2">
         <div className="font-light underline">
-          $ {property.price} x{" "}
+          ${property.price} x{" "}
           {checkIn && checkOut && <span>{numberOfNights} nights</span>}
         </div>
         <div>
-          <span className="">$ {property.price * numberOfNights} </span>
+          <span className="">${property.price * numberOfNights} </span>
         </div>
       </div>
       <div className="flex justify-between items-center text-center p-2">
         <span className="font-light underline">Cleaning Fee:</span>
-        <span className="text-xl">${property.cleaningFee} </span>
+        <span className="">${property.cleaningFee} </span>
       </div>
       <div className="flex justify-between items-center text-center p-2 border-t">
         <span className="text-xl">Total</span>
         <span className="text-xl">
-          $ {property.price * numberOfNights + property.cleaningFee}{" "}
+          ${property.price * numberOfNights + property.cleaningFee}{" "}
         </span>
       </div>
 

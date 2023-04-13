@@ -45,9 +45,10 @@ const PropertiesPage = () => {
               </div>
               <div className="flex-1">
                 <h2 className="text-xl">{property.title}</h2>
-                <p className="max-h-36 overflow-hidden">
-                  {property.description}
-                </p>
+                <div
+                  className="max-h-36 overflow-hidden"
+                  dangerouslySetInnerHTML={{ __html: property.description }}
+                ></div>
               </div>
             </Link>
           ))}

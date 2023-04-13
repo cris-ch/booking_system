@@ -4,6 +4,7 @@ import Features from "../PropertiesFeatures";
 import axios from "axios";
 import AccountNav from "../AccountNav";
 import { Navigate, useParams } from "react-router-dom";
+import TextEditor from "../TextEditor";
 
 const PropertiesFormPage = () => {
   const { id } = useParams();
@@ -69,11 +70,8 @@ const PropertiesFormPage = () => {
       cleaningFee,
     };
 
-
-  {
-    console.log("saving property")
-    console.log({propertyData})
-  }
+    {
+    }
     if (id) {
       await axios.put("/properties/", {
         id,
@@ -121,12 +119,12 @@ const PropertiesFormPage = () => {
           )}
           <PhotosUploader addedPhotos={addedPhotos} onChange={setAddedPhotos} />
           {preInput("Description", "Enter a description of your property.")}
-          <textarea
-            className="border-gray-500"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
+          <TextEditor
             placeholder="Description"
+            value={description}
+            onChange={(value) => setDescription(value)}
           />
+
           {preInput("Features", "Select the features of your property.")}
           <Features selected={features} onChange={setFeatures} />
           {preInput(

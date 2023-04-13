@@ -6,9 +6,7 @@ import { MdOutlineHomeWork } from "react-icons/md";
 
 const AccountNav = () => {
   const { pathname } = useLocation();
-  console.log(pathname);
   let activePage = pathname.split("/")?.[2];
-  console.log(activePage);
   if (activePage === "") {
     activePage = "profile";
   }
