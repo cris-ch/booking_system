@@ -19,7 +19,6 @@ const PropertyPage = () => {
     if (!id) return;
     axios.get("/properties/" + id).then((res) => {
       setProperty(res.data);
-      console.log(res.data);
     });
   }, [id]);
 
@@ -128,6 +127,7 @@ const PropertyPage = () => {
           <BookingWidget property={property} />
         </div>
       </div>
+
       <div className="bg-white -mx-8 -mb-4 pb-16 border-t mt-6 px-6">
         <div className="font-semibold mt-6 pt-3">Extra Info</div>
         <div className="text-gray-600 my-2 text-m leading-5">

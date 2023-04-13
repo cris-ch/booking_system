@@ -2,9 +2,6 @@ import React, { useState } from "react";
 import { differenceInDays } from "date-fns";
 
 const BookingWidget = ({ property }) => {
-  {
-    console.log({ property });
-  }
   const [checkIn, setCheckIn] = useState(new Date().toISOString().slice(0, 10));
   const [checkOut, setCheckOut] = useState(
     new Date(new Date().getTime() + 24 * 60 * 60 * 1000)
@@ -25,7 +22,7 @@ const BookingWidget = ({ property }) => {
     differenceInDays(new Date(checkOut), new Date(checkIn));
 
   return (
-    <div className="bg-white shadow p-3 rounded-2xl">
+    <div className=" sticky top-5 bg-white shadow p-3 rounded-2xl">
       <div className="text-xl text-center">${property.price} per night</div>
       <div className="border rounded-2xl mt-4">
         <div className="flex">
