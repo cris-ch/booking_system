@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { differenceInDays } from "date-fns";
+import axios from "axios";
 
 const BookingWidget = ({ property }) => {
   const [checkIn, setCheckIn] = useState(new Date().toISOString().slice(0, 10));
@@ -10,6 +11,11 @@ const BookingWidget = ({ property }) => {
   );
 
   const [numberOfGuests, setNumberOfGuests] = useState(1);
+  const price = property.price;
+  const cleaningFee = property.cleaningFee;
+
+
+  console.log({ property });
 
   const handleCheckInChange = (e) => {
     setCheckIn(e.target.value);
@@ -20,6 +26,24 @@ const BookingWidget = ({ property }) => {
     checkIn &&
     checkOut &&
     differenceInDays(new Date(checkOut), new Date(checkIn));
+
+  const handleReservation = async () => {
+    try {
+      const total = price * numberOfNights + cleaningFee;
+      await axios.post("/bookings", {
+        propertyId: property._id,
+        checkIn,
+        checkOut,
+        numberOfGuests,
+        price,
+        cleaningFee,
+        total,
+      });
+      // Handle successful booking
+    } catch (error) {
+      // Handle error
+    }
+  };
 
   return (
     <div className=" sticky top-5 bg-white shadow p-3 rounded-2xl">
@@ -70,7 +94,9 @@ const BookingWidget = ({ property }) => {
         </span>
       </div>
 
-      <button className="primary">Reserve</button>
+      <button className="primary" onClick={handleReservation}>
+        Reserve
+      </button>
     </div>
   );
 };
