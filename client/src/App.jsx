@@ -10,7 +10,7 @@ import ProfilePage from "./pages/ProfilePage";
 import PropertiesPage from "./pages/PropertiesPage";
 import PropertiesFormPage from "./pages/PropertiesFormPage";
 import PropertyPage from "./pages/PropertyPage";
-
+import BookingsPage from "./pages/BookingsPage";
 
 axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL;
 axios.defaults.withCredentials = true;
@@ -34,6 +34,7 @@ function App() {
             element={<PropertiesFormPage />}
           />
           <Route path="/property/:id" element={<PropertyPage />} />
+          <Route path="/account/bookings" element={<BookingsPage />} />
         </Route>
       </Routes>
     </UserContextProvider>

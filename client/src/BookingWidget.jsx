@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { differenceInDays } from "date-fns";
 import axios from "axios";
+import { Navigate } from "react-router-dom";
 
 const BookingWidget = ({ property }) => {
   const [checkIn, setCheckIn] = useState(new Date().toISOString().slice(0, 10));
@@ -9,6 +10,7 @@ const BookingWidget = ({ property }) => {
       .toISOString()
       .slice(0, 10)
   );
+  const [redirect, setRedirect] = useState(null);
 
   const [numberOfGuests, setNumberOfGuests] = useState(1);
   const price = property.price;
@@ -40,10 +42,17 @@ const BookingWidget = ({ property }) => {
         total,
       });
       // Handle successful booking
+      console.log({ redirect })
     } catch (error) {
       // Handle error
     }
+    setRedirect(`/account/bookings/${property._id}`);
+
   };
+
+  if (redirect) {
+    return <Navigate to={redirect} />;
+  }
 
   return (
     <div className=" sticky top-5 bg-white shadow p-3 rounded-2xl">
