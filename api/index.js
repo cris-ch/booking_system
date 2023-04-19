@@ -30,6 +30,10 @@ app.use(
   })
 );
 
+// Connect to MongoDB
+mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
+
+
 const uploadToS3 = async (path, originalFileName, mimeType) => {
   const client = new S3Client({
     region: "eu-north-1",
@@ -53,13 +57,46 @@ const uploadToS3 = async (path, originalFileName, mimeType) => {
   return `https://${bucket}.s3.amazonaws.com/${newFileName}`;
 };
 
+
+// Middleware to verify JWT token
+const verifyToken = (req, res, next) => {
+  const { token } = req.cookies;
+  if (token) {
+    jwt.verify(token, jwtSecret, {}, (err, userData) => {
+      if (err) {
+        res.status(401).json({ message: "Unauthorized" });
+      } else {
+        req.userData = userData;
+        next();
+      }
+    });
+  } else {
+    res.status(401).json({ message: "Unauthorized" });
+  }
+};
+
+
+// Middleware to check ownership of property
+const checkOwnership = async (req, res, next) => {
+  if (req.body && req.body.id) {
+    const propertyDoc = await Property.findById(req.body.id);
+    if (propertyDoc && propertyDoc.owner.toString() === req.userData.id) {
+      req.propertyDoc = propertyDoc;
+      next();
+    } else {
+      res.status(401).json({ message: "Unauthorized" });
+    }
+  } else {
+    res.status(400).json({ message: "Bad request" });
+  }
+};
+
+
 app.get("/api/test", (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
   res.send("Hello World!");
 });
 
 app.post("/api/register", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
   const { name, email, password } = req.body;
 
   try {
@@ -76,7 +113,6 @@ app.post("/api/register", async (req, res) => {
 });
 
 app.post("/api/login", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
   const { email, password } = req.body;
 
   const userDoc = await User.findOne({ email });
@@ -103,7 +139,6 @@ app.post("/api/login", async (req, res) => {
 });
 
 app.get("/api/profile", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
   const { token } = req.cookies;
   if (token) {
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
@@ -117,7 +152,6 @@ app.get("/api/profile", async (req, res) => {
 });
 
 app.post("/api/logout", (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
   res.cookie("token", "").json(true);
 });
 
@@ -142,7 +176,6 @@ app.post(
   "/api/upload",
   photosMiddleware.array("photos", 20),
   async (req, res) => {
-    mongoose.connect(process.env.MONGO_URL);
     const uploadedFiles = [];
     for (let i = 0; i < req.files.length; i++) {
       const { path, originalname, mimetype } = req.files[i];
@@ -153,9 +186,7 @@ app.post(
   }
 );
 
-app.post("/api/properties", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const { token } = req.cookies;
+app.post("/api/properties", verifyToken, async (req, res) => {
   const {
     title,
     address,
@@ -169,63 +200,12 @@ app.post("/api/properties", async (req, res) => {
     price,
     cleaningFee,
   } = req.body;
-  if (token) {
-    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-      if (err) throw err;
-      const propertyDoc = await Property.create({
-        owner: userData.id,
-        title,
-        address,
-        description,
-        photos: addedPhotos,
-        features,
-        extraInfo,
-        checkIn,
-        checkOut,
-        maxGuests,
-        price,
-        cleaningFee,
-      });
-      res.json(propertyDoc);
-    });
-  } else {
-    res.json(null);
-  }
-});
-
-app.get("/api/user-properties", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const { token } = req.cookies;
-  if (token) {
-    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-      if (err) throw err;
-      const properties = await Property.find({ owner: userData.id });
-      res.json(properties);
-    });
-  }
-});
-
-app.get("/api/properties/:id", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const { token } = req.cookies;
-  if (token) {
-    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-      if (err) throw err;
-      const property = await Property.findById(req.params.id);
-      res.json(property);
-    });
-  }
-});
-
-app.put("/api/properties", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const { token } = req.cookies;
-  const {
-    id,
+  const propertyDoc = await Property.create({
+    owner: req.userData.id,
     title,
     address,
     description,
-    addedPhotos,
+    photos: addedPhotos,
     features,
     extraInfo,
     checkIn,
@@ -233,58 +213,95 @@ app.put("/api/properties", async (req, res) => {
     maxGuests,
     price,
     cleaningFee,
-  } = req.body;
-
-  jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-    if (err) throw err;
-    const propertyDoc = await Property.findById(id);
-    if (propertyDoc.owner.toString() === userData.id) {
-      propertyDoc.set({
-        title,
-        address,
-        description,
-        photos: addedPhotos,
-        features,
-        extraInfo,
-        checkIn,
-        checkOut,
-        maxGuests,
-        price,
-        cleaningFee,
-      });
-      await propertyDoc.save();
-      res.json("ok");
-    }
   });
+  res.json(propertyDoc);
 });
+
+app.get(
+  "/api/user-properties",
+  verifyToken,
+  async (req, res) => {
+    const properties = await Property.find({ owner: req.userData.id });
+    res.json(properties);
+  }
+);
+
+app.get(
+  "/api/properties/:id",
+  verifyToken,
+  async (req, res) => {
+    const property = await Property.findById(req.params.id);
+    res.json(property);
+  }
+);
+
+app.put(
+  "/api/properties",
+  verifyToken,
+  checkOwnership,
+  async (req, res) => {
+    const {
+      title,
+      address,
+      description,
+      addedPhotos,
+      features,
+      extraInfo,
+      checkIn,
+      checkOut,
+      maxGuests,
+      price,
+      cleaningFee,
+    } = req.body;
+    req.propertyDoc.set({
+      title,
+      address,
+      description,
+      photos: addedPhotos,
+      features,
+      extraInfo,
+      checkIn,
+      checkOut,
+      maxGuests,
+      price,
+      cleaningFee,
+    });
+    await req.propertyDoc.save();
+    res.json("ok");
+  }
+);
 
 app.get("/api/properties", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
   const properties = await Property.find();
   res.json(properties);
 });
 
-app.post("/api/bookings", async (req, res) => {
-  console.log("req.body", req.body)
-  mongoose.connect(process.env.MONGO_URL);
-  const { token } = req.cookies;
-  const { propertyId, checkIn, checkOut, numberOfGuests, price, cleaningFee, total } = req.body;
-  if (token) {
-    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-      if (err) throw err;
-      const bookingDoc = await Booking.create({
-        property: propertyId,
-        user: userData.id,
-        checkIn,
-        checkOut,
-        numberOfGuests,
-        price,
-        cleaningFee,
-        total,
-      });
-      res.json(bookingDoc);
-    });
-  }
+app.post("/api/bookings", verifyToken, async (req, res) => {
+  const {
+    propertyId,
+    checkIn,
+    checkOut,
+    numberOfGuests,
+    price,
+    cleaningFee,
+    total,
+  } = req.body;
+  const bookingDoc = await Booking.create({
+    property: propertyId,
+    user: req.userData.id,
+    checkIn,
+    checkOut,
+    numberOfGuests,
+    price,
+    cleaningFee,
+    total,
+  });
+  res.json(bookingDoc);
+});
+
+app.get("/api/bookings", verifyToken, async (req, res) => {
+  const bookings = await Booking.find({ user: req.userData.id });
+  res.json(bookings);
 });
 
 app.listen(4000);
