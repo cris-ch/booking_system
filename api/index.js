@@ -31,8 +31,22 @@ app.use(
 );
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(process.env.MONGO_URL, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
+const getUserData = (req) => {
+  return new Promise((resolve, reject) => {
+    jwt.verify(req.cookies.token, jwtSecret, {}, (err, userData) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(userData);
+      }
+    });
+  });
+};
 
 const uploadToS3 = async (path, originalFileName, mimeType) => {
   const client = new S3Client({
@@ -57,7 +71,6 @@ const uploadToS3 = async (path, originalFileName, mimeType) => {
   return `https://${bucket}.s3.amazonaws.com/${newFileName}`;
 };
 
-
 // Middleware to verify JWT token
 const verifyToken = (req, res, next) => {
   const { token } = req.cookies;
@@ -75,7 +88,6 @@ const verifyToken = (req, res, next) => {
   }
 };
 
-
 // Middleware to check ownership of property
 const checkOwnership = async (req, res, next) => {
   if (req.body && req.body.id) {
@@ -90,7 +102,6 @@ const checkOwnership = async (req, res, next) => {
     res.status(400).json({ message: "Bad request" });
   }
 };
-
 
 app.get("/api/test", (req, res) => {
   res.send("Hello World!");
@@ -217,59 +228,46 @@ app.post("/api/properties", verifyToken, async (req, res) => {
   res.json(propertyDoc);
 });
 
-app.get(
-  "/api/user-properties",
-  verifyToken,
-  async (req, res) => {
-    const properties = await Property.find({ owner: req.userData.id });
-    res.json(properties);
-  }
-);
+app.get("/api/user-properties", verifyToken, async (req, res) => {
+  const properties = await Property.find({ owner: req.userData.id });
+  res.json(properties);
+});
 
-app.get(
-  "/api/properties/:id",
-  verifyToken,
-  async (req, res) => {
-    const property = await Property.findById(req.params.id);
-    res.json(property);
-  }
-);
+app.get("/api/properties/:id", verifyToken, async (req, res) => {
+  const property = await Property.findById(req.params.id);
+  res.json(property);
+});
 
-app.put(
-  "/api/properties",
-  verifyToken,
-  checkOwnership,
-  async (req, res) => {
-    const {
-      title,
-      address,
-      description,
-      addedPhotos,
-      features,
-      extraInfo,
-      checkIn,
-      checkOut,
-      maxGuests,
-      price,
-      cleaningFee,
-    } = req.body;
-    req.propertyDoc.set({
-      title,
-      address,
-      description,
-      photos: addedPhotos,
-      features,
-      extraInfo,
-      checkIn,
-      checkOut,
-      maxGuests,
-      price,
-      cleaningFee,
-    });
-    await req.propertyDoc.save();
-    res.json("ok");
-  }
-);
+app.put("/api/properties", verifyToken, checkOwnership, async (req, res) => {
+  const {
+    title,
+    address,
+    description,
+    addedPhotos,
+    features,
+    extraInfo,
+    checkIn,
+    checkOut,
+    maxGuests,
+    price,
+    cleaningFee,
+  } = req.body;
+  req.propertyDoc.set({
+    title,
+    address,
+    description,
+    photos: addedPhotos,
+    features,
+    extraInfo,
+    checkIn,
+    checkOut,
+    maxGuests,
+    price,
+    cleaningFee,
+  });
+  await req.propertyDoc.save();
+  res.json("ok");
+});
 
 app.get("/api/properties", async (req, res) => {
   const properties = await Property.find();
@@ -277,6 +275,7 @@ app.get("/api/properties", async (req, res) => {
 });
 
 app.post("/api/bookings", verifyToken, async (req, res) => {
+  const userData = await getUserData(req);
   const {
     propertyId,
     checkIn,
@@ -288,7 +287,7 @@ app.post("/api/bookings", verifyToken, async (req, res) => {
   } = req.body;
   const bookingDoc = await Booking.create({
     property: propertyId,
-    user: req.userData.id,
+    user: userData.id,
     checkIn,
     checkOut,
     numberOfGuests,
@@ -300,8 +299,8 @@ app.post("/api/bookings", verifyToken, async (req, res) => {
 });
 
 app.get("/api/bookings", verifyToken, async (req, res) => {
-  const bookings = await Booking.find({ user: req.userData.id });
-  res.json(bookings);
+  const userData = await getUserData(req);
+  res.json(await Booking.find({ user: userData.id }).populate("property"));
 });
 
 app.listen(4000);
