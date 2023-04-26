@@ -5,7 +5,7 @@ const bookingSchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, required: true },
   checkIn: Date,
   checkOut: Date,
-  guests: Number,
+  numberOfGuests: Number,
   price: Number,
   cleaningFee: Number,
   total: Number,
