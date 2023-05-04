@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import PhotosUploader from "../PhotosUploader";
-import Features from "../PropertiesFeatures";
+import PhotosUploader from "../components/PhotosUploader";
+import Features from "../components/PropertiesFeatures";
 import axios from "axios";
-import AccountNav from "../AccountNav";
+import AccountNav from "../components/AccountNav";
 import { Navigate, useParams } from "react-router-dom";
-import TextEditor from "../TextEditor";
+import TextEditor from "../components/TextEditor";
 
 const PropertiesFormPage = () => {
   const { id } = useParams();

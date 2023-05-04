@@ -4,7 +4,7 @@ import { Navigate, useParams } from "react-router-dom";
 import axios from "axios";
 import PropertiesPage from "./PropertiesPage";
 
-import AccountNav from "../AccountNav";
+import AccountNav from "../components/AccountNav";
 
 const ProfilePage = () => {
   const { user, setUser, ready } = useContext(UserContext);

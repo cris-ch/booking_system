@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { Link } from "react-router-dom";
-import aPlusLogo from "./assets/logo.svg";
-import { UserContext } from "./UserContext";
+import aPlusLogo from "../assets/logo.svg";
+import { UserContext } from "../UserContext";
 import { AiOutlineMenu } from "react-icons/ai";
 import { HiOutlineUserCircle } from "react-icons/hi";
 import SearchBar from "./SearchBar";

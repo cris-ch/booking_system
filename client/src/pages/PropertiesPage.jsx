@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import NewPropertyForm from "../NewPropertyForm";
+import NewPropertyForm from "../components/NewPropertyForm";
 import { MdOutlineExposurePlus1 } from "react-icons/md";
-import AccountNav from "../AccountNav";
+import AccountNav from "../components/AccountNav";
 import axios from "axios";
 import Image from "../Image";
 

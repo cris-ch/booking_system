@@ -3,7 +3,7 @@ import axios from "axios";
 import { MdFileUpload } from "react-icons/md";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
-import Image from "./Image";
+import Image from "../Image";
 
 const PhotosUploader = ({ addedPhotos, onChange }) => {
   const [photoLink, setPhotoLink] = useState("");
