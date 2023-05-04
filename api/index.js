@@ -25,7 +25,7 @@ app.use(CookieParser());
 app.use("/uploads", express.static(__dirname + "/uploads"));
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "http://localhost:5174",
     credentials: true,
   })
 );
@@ -36,16 +36,13 @@ mongoose.connect(process.env.MONGO_URL, {
   useUnifiedTopology: true,
 });
 
-const getUserData = (req) => {
-  return new Promise((resolve, reject) => {
-    jwt.verify(req.cookies.token, jwtSecret, {}, (err, userData) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(userData);
-      }
-    });
-  });
+const getUserData = async (req) => {
+  try {
+    const userData = await jwt.verify(req.cookies.token, jwtSecret, {});
+    return userData;
+  } catch (error) {
+    throw error;
+  }
 };
 
 const uploadToS3 = async (path, originalFileName, mimeType) => {
@@ -85,7 +82,9 @@ const verifyToken = (req, res, next) => {
     });
   } else {
     res.status(401).json({ message: "Unauthorized" });
+    
   }
+
 };
 
 // Middleware to check ownership of property
@@ -103,9 +102,6 @@ const checkOwnership = async (req, res, next) => {
   }
 };
 
-app.get("/api/test", (req, res) => {
-  res.send("Hello World!");
-});
 
 app.post("/api/register", async (req, res) => {
   const { name, email, password } = req.body;
@@ -168,6 +164,13 @@ app.post("/api/logout", (req, res) => {
 
 app.post("/api/upload-by-url", async (req, res) => {
   const { url } = req.body;
+
+  if (!url) {
+    return res
+      .status(400)
+      .json({ message: "Please provide a valid image URL" });
+  }
+
   const newName = "photo" + Date.now() + ".jpg";
 
   await imageDownloader.image({
@@ -233,7 +236,7 @@ app.get("/api/user-properties", verifyToken, async (req, res) => {
   res.json(properties);
 });
 
-app.get("/api/properties/:id", verifyToken, async (req, res) => {
+app.get("/api/properties/:id", async (req, res) => {
   const property = await Property.findById(req.params.id);
   res.json(property);
 });
