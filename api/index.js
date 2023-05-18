@@ -306,4 +306,29 @@ app.get("/api/bookings", verifyToken, async (req, res) => {
   res.json(await Booking.find({ user: userData.id }).populate("property"));
 });
 
+app.delete("/api/properties/:id", verifyToken, async (req, res) => {
+  try {
+    const propertyId = req.params.id;
+    const property = await Property.findById(propertyId);
+
+    if (!property) {
+      return res.status(404).json({ message: "Property not found" });
+    }
+
+    if (property.owner.toString() !== req.userData.id) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    await Property.findByIdAndDelete(propertyId);
+
+    res.json({ message: "Property deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+
+
+
 app.listen(4000);

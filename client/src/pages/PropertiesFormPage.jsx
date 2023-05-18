@@ -42,9 +42,11 @@ const PropertiesFormPage = () => {
   function inputHeader(text) {
     return <h2 className="text-xl mt-4">{text}</h2>;
   }
+
   function inputDescription(text) {
     return <p className="text-gray-500 text-md">{text}</p>;
   }
+
   function preInput(header, description) {
     return (
       <div>
@@ -70,8 +72,6 @@ const PropertiesFormPage = () => {
       cleaningFee,
     };
 
-    {
-    }
     if (id) {
       await axios.put("/properties/", {
         id,
@@ -82,6 +82,14 @@ const PropertiesFormPage = () => {
       await axios.post("/properties", {
         ...propertyData,
       });
+      setRedirect(true);
+    }
+  }
+
+  async function deleteProperty() {
+    const confirmed = window.confirm("Are you sure you want to delete this property?");
+    if (confirmed && id) {
+      await axios.delete("/properties/" + id);
       setRedirect(true);
     }
   }
@@ -202,8 +210,19 @@ const PropertiesFormPage = () => {
             />
           </div>
 
-          <div className=" flex justify-center">
-            <button className="primary my-10 max-w-[40%]">Save</button>
+          <div className="flex justify-center space-x-4 mt-10">
+            {id && (
+              <button
+                className="primary"
+                type="button"
+                onClick={deleteProperty}
+              >
+                Delete
+              </button>
+            )}
+            <button className="primary" type="submit">
+              Save
+            </button>
           </div>
         </form>
       </div>
