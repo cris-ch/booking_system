@@ -14,12 +14,13 @@ const PropertiesPage = () => {
       setProperties(data);
     });
   }, []);
+
   return (
     <div>
       <AccountNav />
       <div className="text-center">
         <Link
-          className="inline-flex bg-primary text-white py-2 px-6 rounded-full gap-2"
+          className="inline-flex items-center bg-primary text-white py-2 px-6 rounded-full gap-2"
           to={"/account/properties/new"}
         >
           Add new property
@@ -43,7 +44,7 @@ const PropertiesPage = () => {
                   />
                 )}
               </div>
-              <div className="flex-1">
+              <div className="flex-1 text-center"> {/* Added text-center class */}
                 <h2 className="text-xl">{property.title}</h2>
                 <div
                   className="max-h-36 overflow-hidden"
