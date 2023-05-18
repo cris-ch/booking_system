@@ -32,7 +32,7 @@ const PropertiesPage = () => {
           properties.map((property, idx) => (
             <Link
               to={"/account/properties/" + property._id}
-              className="cursor-pointer flex gap-4 bg-gray-300 p-4 rounded-2xl mb-2"
+              className="cursor-pointer flex gap-4 bg-gray-100 p-4 rounded-2xl mb-2"
               key={idx}
             >
               <div className="flex w-48 h-48 rounded-2xl overflow-hidden">

@@ -138,25 +138,19 @@ app.post("/api/login", async (req, res) => {
         }
       );
     } else {
-      res.status(422).json("wrong password");
+      res.status(401).json({ message: "Invalid email or password" });
     }
   } else {
-    res.json("not found");
+    res.status(401).json({ message: "Invalid email or password" });
   }
 });
 
-app.get("/api/profile", async (req, res) => {
-  const { token } = req.cookies;
-  if (token) {
-    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-      if (err) throw err;
-      const { name, email, _id } = await User.findById(userData.id);
-      res.json({ name, email, _id });
-    });
-  } else {
-    res.json(null);
-  }
+
+app.get("/api/profile", verifyToken, async (req, res) => {
+  const { name, email, _id } = await User.findById(req.userData.id);
+  res.json({ name, email, _id });
 });
+
 
 app.post("/api/logout", (req, res) => {
   res.cookie("token", "").json(true);
@@ -328,6 +322,23 @@ app.delete("/api/properties/:id", verifyToken, async (req, res) => {
   }
 });
 
+app.delete("/api/delete-account", verifyToken, async (req, res) => {
+  try {
+    const userData = await getUserData(req);
+    const user = await User.findById(userData.id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    await User.findByIdAndDelete(userData.id);
+
+    res.json({ message: "Account deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
 
 
 

@@ -21,6 +21,21 @@ const ProfilePage = () => {
     setUser(null);
   }
 
+  async function deleteAccount() {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete your account?"
+    );
+    if (confirmDelete) {
+      try {
+        await axios.delete("/delete-account");
+        setUser(null);
+        setRedirect("/");
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  }
+
   if (!ready) return <div>Loading...</div>;
 
   if (ready && !user && !redirect) {
@@ -39,6 +54,9 @@ const ProfilePage = () => {
           Logged in as user {user.name} ({user.email})
           <button className="primary max-w-xs mt-2" onClick={logout}>
             Logout
+          </button>
+          <button className="primary max-w-xs mt-2" onClick={deleteAccount}>
+            Delete Account
           </button>
         </div>
       )}
