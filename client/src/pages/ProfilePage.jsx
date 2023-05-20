@@ -51,13 +51,15 @@ const ProfilePage = () => {
       <AccountNav />
       {subpage === "profile" && (
         <div className="text-center max-w-lg mx-auto">
-          Logged in as user {user.name} ({user.email})
-          <button className="primary max-w-xs mt-2" onClick={logout}>
-            Logout
-          </button>
-          <button className="primary max-w-xs mt-2" onClick={deleteAccount}>
-            Delete Account
-          </button>
+          <div className="flex flex-col items-center">
+            <p className="text-lg">Logged in as user {user.name} ({user.email})</p>
+            <button className="primary max-w-xs mt-2" onClick={logout}>
+              Logout
+            </button>
+            <button className="primary bg-red-300 max-w-xs mt-2" onClick={deleteAccount}>
+              Delete Account
+            </button>
+          </div>
         </div>
       )}
       {subpage === "properties" && <PropertiesPage />}
